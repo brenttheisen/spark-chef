@@ -29,3 +29,26 @@ bash 'build spark assembly' do
   user node.spark.username
 end
 
+spark_classpath = []
+if node.spark.calliope
+  calliope_jar = "#{node.spark.home}/lib_managed/jars/calliope.jar"
+  remote_file calliope_jar do
+    source node.spark.calliope_url
+    owner node.spark.username
+    group node.spark.username
+    action :create_if_missing
+  end
+
+  spark_classpath << node.spark.cassandra_classpath
+end
+
+template "#{node.spark.home}/conf/spark-env.sh" do
+  source "conf-spark-env.sh.erb"
+  mode 440
+  owner node.spark.username
+  group node.spark.username
+  variables({
+    :spark_classpath => spark_classpath.join(':')
+  })
+end
+
