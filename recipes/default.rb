@@ -27,7 +27,7 @@ assembly_env_vars << "SPARK_HADOOP_VERSION=#{node.spark.hadoop_version}" if node
 assembly_env_vars << "SPARK_YARN=true" if node.spark.yarn
 bash 'build spark assembly' do
   cwd node.spark.home
-  code '#{assembly_env_vars.join(' ')} sbt/sbt assembly'
+  code "#{assembly_env_vars.join(' ')} sbt/sbt assembly"
   user node.spark.username
 end
 
