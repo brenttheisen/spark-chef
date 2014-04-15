@@ -5,6 +5,8 @@
 
 include_recipe 'java'
 
+package 'git'
+
 user node.spark.username do
   username node.spark.username
   comment 'Spark'
