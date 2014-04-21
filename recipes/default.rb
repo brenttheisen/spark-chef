@@ -22,6 +22,14 @@ ark 'spark' do
   action :install
 end
 
+if node.spark.attribute?(:properties) && node.spark.properties.attribute?(:"spark.local.dir")
+  directory node.spark.properties.:"spark.local.dir" do
+    owner node.spark.username
+    group node.spark.username
+    recursive true
+  end
+end
+
 assembly_env_vars = []
 assembly_env_vars << "SPARK_HADOOP_VERSION=#{node.spark.hadoop_version}" if node.spark.hadoop_version
 assembly_env_vars << "SPARK_YARN=true" if node.spark.yarn
