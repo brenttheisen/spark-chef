@@ -50,7 +50,8 @@ template "#{node.spark.home}/conf/spark-env.sh" do
   owner node.spark.username
   group node.spark.username
   variables({
-    :spark_classpath => spark_classpath.join(':')
+    :spark_classpath => spark_classpath.join(':'),
+    :properties => node.spark.properties
   })
 end
 

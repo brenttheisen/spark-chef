@@ -21,4 +21,5 @@
 # - SPARK_WORKER_DIR, to set the working directory of worker processes
 
 SPARK_CLASSPATH=<%= @spark_classpath %>
+SPARK_JAVA_OPTS=<%= @properties.collect { |k, v| "-D#{k}=#{v}" }.join(' ') %>
 
