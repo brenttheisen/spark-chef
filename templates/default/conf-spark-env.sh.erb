@@ -20,6 +20,39 @@
 # - SPARK_WORKER_INSTANCES, to set the number of worker processes per node
 # - SPARK_WORKER_DIR, to set the working directory of worker processes
 
+<% if @local_ip %>
+SPARK_LOCAL_IP=<%= @local_ip %>
+<% end %>
+<% if @mesos_native_library %>
+MESOS_NATIVE_LIBRARY=<%= @mesos_native_library %>
+<% end %>
+
+<% if @master_ip %>
+SPARK_MASTER_IP=<%= @master_ip %>
+<% end %>
+<% if @master_port %>
+SPARK_MASTER_PORT=<%= @master_port %>
+<% end %>
+<% if @worker_cores %>
+SPARK_WORKER_CORES=<%= @worker_cores %>
+<% end %>
+<% if @worker_memory %>
+SPARK_WORKER_MEMORY=<%= @worker_memory %>
+<% end %>
+<% if @worker_port %>
+SPARK_WORKER_PORT=<%= @worker_port %>
+<% end %>
+<% if @worker_instances %>
+SPARK_WORKER_INSTANCES=<%= @worker_instances %>
+<% end %>
+<% if @worker_dir %>
+SPARK_WORKER_DIR=<%= @worker_dir %>
+<% end %>
+
+<% if @spark_classpath %>
 SPARK_CLASSPATH=<%= @spark_classpath %>
+<% end %>
+<% if !java_opts.nil? && !java_opts.empty? %>
 SPARK_JAVA_OPTS=<%= @properties.collect { |k, v| "-D#{k}=#{v}" }.join(' ') %>
+<% end %>
 

@@ -44,6 +44,11 @@ if node.spark.calliope
   spark_classpath << node.spark.cassandra_classpath
 end
 
+java_opts = node.spark.java_opts || []
+java_opts = [java_opts] if !java_opts.kind_of(Array)
+java_opts += node.spark.properties.collect { |k, v| "-D#{k}=#{v}" }
+java_opts = java_opts.join(' ')
+
 template "#{node.spark.home}/conf/spark-env.sh" do
   source "conf-spark-env.sh.erb"
   mode 440
@@ -51,6 +56,18 @@ template "#{node.spark.home}/conf/spark-env.sh" do
   group node.spark.username
   variables({
     :spark_classpath => spark_classpath.join(':'),
+    :local_ip => node.spark.local_ip,
+    :mesos_native_library => node.spark.mesos_native_library,
+    :java_opts => java_opts,
+    :master_ip => node.spark.master_ip,
+    :master_port => node.spark.master_port,
+    :master_webui_port => node.spark.master_webui_port,
+    :worker_cores => node.spark.worker_cores,
+    :worker_memory => node.spark.worker_memory,
+    :worker_port => node.spark.worker_port,
+    :worker_webui_port => node.spark.worker_webui_port,
+    :worker_instances => node.spark.worker_instances,
+    :worker_dir => node.spark.worker_dir,
     :properties => node.spark.properties
   })
 end
