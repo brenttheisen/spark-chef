@@ -56,6 +56,7 @@ template "#{node.spark.home}/conf/spark-env.sh" do
   group node.spark.username
   variables({
     :spark_classpath => spark_classpath.join(':'),
+    :spark_mem => node.spark.spark_mem,
     :local_ip => node.spark.local_ip,
     :mesos_native_library => node.spark.mesos_native_library,
     :java_opts => java_opts,
