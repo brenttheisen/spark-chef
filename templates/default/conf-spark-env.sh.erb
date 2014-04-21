@@ -55,7 +55,7 @@ SPARK_WORKER_DIR=<%= @worker_dir %>
 <% if @spark_classpath %>
 SPARK_CLASSPATH=<%= @spark_classpath %>
 <% end %>
-<% if !java_opts.nil? && !java_opts.empty? %>
-SPARK_JAVA_OPTS=<%= @properties.collect { |k, v| "-D#{k}=#{v}" }.join(' ') %>
+<% if !@java_opts.nil? && !@java_opts.empty? %>
+SPARK_JAVA_OPTS=<%= @java_opts %>
 <% end %>
 
