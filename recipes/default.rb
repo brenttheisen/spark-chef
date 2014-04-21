@@ -23,7 +23,7 @@ ark 'spark' do
 end
 
 if node.spark.attribute?(:properties) && node.spark.properties.attribute?(:"spark.local.dir")
-  directory node.spark.properties.:"spark.local.dir" do
+  directory node.spark.properties[:"spark.local.dir"] do
     owner node.spark.username
     group node.spark.username
     recursive true
