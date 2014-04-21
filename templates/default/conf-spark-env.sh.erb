@@ -20,6 +20,9 @@
 # - SPARK_WORKER_INSTANCES, to set the number of worker processes per node
 # - SPARK_WORKER_DIR, to set the working directory of worker processes
 
+<% if @spark_mem %>
+SPARK_MEM=<%= @spark_mem %>
+<% end %>
 <% if @local_ip %>
 SPARK_LOCAL_IP=<%= @local_ip %>
 <% end %>
