@@ -45,7 +45,7 @@ if node.spark.calliope
 end
 
 java_opts = node.spark.java_opts || []
-java_opts = [java_opts] if !java_opts.kind_of(Array)
+java_opts = [java_opts] if !java_opts.kind_of?(Array)
 java_opts += node.spark.properties.collect { |k, v| "-D#{k}=#{v}" }
 java_opts = java_opts.join(' ')
 
