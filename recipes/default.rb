@@ -102,8 +102,8 @@ template "/etc/init.d/spark_master" do
     "username" => node.spark.username,
     "start_priority" => "70",
     "stop_priority" => "75",
-    "start_command" => "#{node.spark.home}/spark/bin/start-master.sh > /dev/null 2>&1",
-    "stop_command" => "#{node.spark.home}/spark/bin/stop-master.sh > /dev/null 2>&1"
+    "start_command" => "#{node.spark.home}/sbin/start-master.sh",
+    "stop_command" => "#{node.spark.home}/sbin/stop-master.sh"
   })
   only_if { node.ipaddress == node.spark.master_ip }
 end
@@ -123,8 +123,8 @@ template "/etc/init.d/spark_slave" do
     "username" => node.spark.username,
     "start_priority" => "75",
     "stop_priority" => "70",
-    "start_command" => "su #{node.spark.username} -c #{node.spark.home}/spark/bin/start-slave.sh > /dev/null 2>&1",
-    "stop_command" => "su #{node.spark.username} -c #{node.spark.home}/spark/bin/stop-slave.sh > /dev/null 2>&1"
+    "start_command" => "#{node.spark.home}/sbin/start-slave.sh",
+    "stop_command" => "#{node.spark.home}/sbin/stop-slave.sh"
   })
 end
 

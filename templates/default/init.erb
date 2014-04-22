@@ -16,20 +16,19 @@ lockfile=/var/lock/subsys/$prog
 case "$1" in
     start)
         echo -n $"Starting $prog: "
-        su -l <%= @username %> -c <%= @start_command %>
+        su -l <%= @username %> -c <%= @start_command %> > /dev/null 2>&1
         retval=$?
-        echo
         if [ $retval -eq 0 ]; then
           touch $lockfile
           success
         else
           failure
-        end
+        fi
         return $retval
         ;;
     stop)
         echo -n $"Stopping $prog: "
-        su -l <%= @username %> -c <%= @stop_command %>
+        su -l <%= @username %> -c <%= @stop_command %> > /dev/null 2>&1
         retval=$?
         if [ $retval -eq 0 ]; then
           rm -f $lockfile
