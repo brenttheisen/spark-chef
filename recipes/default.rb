@@ -89,5 +89,6 @@ template "#{node.spark.home}/conf/slaves" do
   variables({
     :slaves => node.spark.slaves
   })
+  only_if { !node.spark.slaves.nil? && !node.spark.slaves.empty? }
 end
 
