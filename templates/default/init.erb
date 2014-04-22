@@ -13,75 +13,38 @@ prog="<%= @prog %>"
 
 lockfile=/var/lock/subsys/$prog
 
-start() {
-    echo -n $"Starting $prog: "
-    <%= @start_command %>
-    retval=$?
-    echo
-    [ $retval -eq 0 ] && touch $lockfile
-    return $retval
-}
-
-stop() {
-    echo -n $"Stopping $prog: "
-    <%= @stop_command %>
-    retval=$?
-    echo
-    [ $retval -eq 0 ] && rm -f $lockfile
-    return $retval
-}
-
-restart() {
-    stop
-    start
-}
-
-reload() {
-    restart
-}
-
-force_reload() {
-    restart
-}
-
-rh_status() {
-    # run checks to determine if the service is running or use generic status
-    status $prog
-}
-
-rh_status_q() {
-    rh_status >/dev/null 2>&1
-}
-
-
 case "$1" in
     start)
-        rh_status_q && exit 0
-        $1
+        echo -n $"Starting $prog: "
+        su -l <%= @username %> -c <%= @start_command %>
+        retval=$?
+        echo
+        if [ $retval -eq 0 ]; then
+          touch $lockfile
+          success
+        else
+          failure
+        end
+        return $retval
         ;;
     stop)
-        rh_status_q || exit 0
-        $1
+        echo -n $"Stopping $prog: "
+        su -l <%= @username %> -c <%= @stop_command %>
+        retval=$?
+        if[ $retval -eq 0 ]; then
+          rm -f $lockfile
+          success
+        else
+          failure
+        fi
+        return $retval
         ;;
     restart)
-        $1
-        ;;
-    reload)
-        rh_status_q || exit 7
-        $1
-        ;;
-    force-reload)
-        force_reload
-        ;;
-    status)
-        rh_status
-        ;;
-    condrestart|try-restart)
-        rh_status_q || exit 0
-        restart
+        stop
+        start
         ;;
     *)
-        echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload}"
+        echo $"Usage: $0 {start|stop|restart}"
         exit 2
 esac
 exit $?
