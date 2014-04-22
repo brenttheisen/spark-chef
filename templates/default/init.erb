@@ -31,7 +31,7 @@ case "$1" in
         echo -n $"Stopping $prog: "
         su -l <%= @username %> -c <%= @stop_command %>
         retval=$?
-        if[ $retval -eq 0 ]; then
+        if [ $retval -eq 0 ]; then
           rm -f $lockfile
           success
         else
