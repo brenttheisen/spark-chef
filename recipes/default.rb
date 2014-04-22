@@ -92,3 +92,16 @@ template "#{node.spark.home}/conf/slaves" do
   only_if { !node.spark.slaves.nil? && !node.spark.slaves.empty? }
 end
 
+service "spark_master" do
+  start_command "su #{node.spark.user} -c #{node.spark.home}/spark/bin/start-master.sh"
+  stop_command "su #{node.spark.user} -c #{node.spark.home}/spark/bin/stop-master.sh"
+  action :enable, :start
+  only_if { node.ipaddress == node.spark.master_ip }
+end
+
+service "spark_worker" do
+  start_command "su #{node.spark.user} -c #{node.spark.home}/spark/bin/start-slave.sh"
+  stop_command "su #{node.spark.user} -c #{node.spark.home}/spark/bin/stop-slave.sh"
+  action :enable, :start
+end
+
