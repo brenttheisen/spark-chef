@@ -123,8 +123,8 @@ template "/etc/init.d/spark_slave" do
     "username" => node.spark.username,
     "start_priority" => "75",
     "stop_priority" => "70",
-    "start_command" => "#{node.spark.home}/sbin/start-slave.sh",
-    "stop_command" => "#{node.spark.home}/sbin/stop-slave.sh"
+    "start_command" => "#{node.spark.home}/sbin/start-slave.sh spark://#{node.spark.master_ip}:#{node.spark.master_port}",
+    "stop_command" => "#{node.spark.home}/sbin/stop-slave.sh spark://#{node.spark.master_ip}:#{node.spark.master_port}"
   })
 end
 
