@@ -81,3 +81,13 @@ template "#{node.spark.home}/conf/spark-env.sh" do
   })
 end
 
+template "#{node.spark.home}/conf/slaves" do
+  source "slaves.erb"
+  mode 440
+  owner node.spark.username
+  group node.spark.username
+  variables({
+    :slaves => node.spark.slaves
+  })
+end
+

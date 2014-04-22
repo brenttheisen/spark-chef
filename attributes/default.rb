@@ -8,6 +8,7 @@ default[:spark] = {
   :local_ip => nil,
   :mesos_native_library => nil,
   :java_opts => nil,
+  :slaves => [],
   :master_ip => nil,
   :master_port => nil,
   :master_webui_port => nil,
