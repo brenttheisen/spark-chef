@@ -94,11 +94,13 @@ end
 
 template "/etc/init.d/spark_master" do
   source "init.erb"
+  mode "755"
   variables({
     "prog" => "spark_master",
+    "description" => "Spark master daemon",
     "runlevels" => "2345",
-    "start_priority" => "100",
-    "stop_priority" => "105",
+    "start_priority" => "70",
+    "stop_priority" => "75",
     "start_command" => "su #{node.spark.username} -c #{node.spark.home}/spark/bin/start-master.sh > /dev/null 2>&1",
     "stop_command" => "su #{node.spark.username} -c #{node.spark.home}/spark/bin/stop-master.sh > /dev/null 2>&1"
   })
@@ -112,11 +114,13 @@ end
 
 template "/etc/init.d/spark_slave" do
   source "init.erb"
+  mode "755"
   variables({
     "prog" => "spark_slave",
+    "description" => "Spark slave daemon",
     "runlevels" => "2345",
-    "start_priority" => "105",
-    "stop_priority" => "100",
+    "start_priority" => "75",
+    "stop_priority" => "70",
     "start_command" => "su #{node.spark.username} -c #{node.spark.home}/spark/bin/start-slave.sh > /dev/null 2>&1",
     "stop_command" => "su #{node.spark.username} -c #{node.spark.home}/spark/bin/stop-slave.sh > /dev/null 2>&1"
   })
