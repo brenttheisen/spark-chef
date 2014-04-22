@@ -92,16 +92,37 @@ template "#{node.spark.home}/conf/slaves" do
   only_if { !node.spark.slaves.nil? && !node.spark.slaves.empty? }
 end
 
+template "/etc/init.d/spark_master" do
+  source "init.erb"
+  variables({
+    "prog" => "spark_master",
+    "runlevels" => "2345",
+    "start_priority" => "100",
+    "stop_priority" => "105",
+    "start_command" => "su #{node.spark.username} -c #{node.spark.home}/spark/bin/start-master.sh > /dev/null 2>&1",
+    "stop_command" => "su #{node.spark.username} -c #{node.spark.home}/spark/bin/stop-master.sh > /dev/null 2>&1"
+  })
+  only_if { node.ipaddress == node.spark.master_ip }
+end
+
 service "spark_master" do
-  start_command "su #{node.spark.username} -c #{node.spark.home}/spark/bin/start-master.sh"
-  stop_command "su #{node.spark.username} -c #{node.spark.home}/spark/bin/stop-master.sh"
   action [:enable, :start]
   only_if { node.ipaddress == node.spark.master_ip }
 end
 
-service "spark_worker" do
-  start_command "su #{node.spark.username} -c #{node.spark.home}/spark/bin/start-slave.sh"
-  stop_command "su #{node.spark.username} -c #{node.spark.home}/spark/bin/stop-slave.sh"
+template "/etc/init.d/spark_slave" do
+  source "init.erb"
+  variables({
+    "prog" => "spark_slave",
+    "runlevels" => "2345",
+    "start_priority" => "105",
+    "stop_priority" => "100",
+    "start_command" => "su #{node.spark.username} -c #{node.spark.home}/spark/bin/start-slave.sh > /dev/null 2>&1",
+    "stop_command" => "su #{node.spark.username} -c #{node.spark.home}/spark/bin/stop-slave.sh > /dev/null 2>&1"
+  })
+end
+
+service "spark_slave" do
   action [:enable, :start]
 end
 
