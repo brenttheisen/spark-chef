@@ -113,22 +113,24 @@ service "spark_master" do
   only_if { node.ipaddress == node.spark.master_ip }
 end
 
-template "/etc/init.d/spark_slave" do
+template "/etc/init.d/spark_slaves" do
   source "init.erb"
   mode "755"
   variables({
-    "prog" => "spark_slave",
-    "description" => "Spark slave daemon",
+    "prog" => "spark_slaves",
+    "description" => "Spark slave daemons",
     "runlevels" => "2345",
     "username" => node.spark.username,
     "start_priority" => "75",
     "stop_priority" => "70",
-    "start_command" => "#{node.spark.home}/sbin/start-slave.sh spark://#{node.spark.master_ip}:#{node.spark.master_port}",
-    "stop_command" => "#{node.spark.home}/sbin/stop-slave.sh spark://#{node.spark.master_ip}:#{node.spark.master_port}"
+    "start_command" => "#{node.spark.home}/sbin/start-slaves.sh",
+    "stop_command" => "#{node.spark.home}/sbin/stop-slaves.sh"
   })
+  only_if { node.ipaddress == node.spark.master_ip }
 end
 
-service "spark_slave" do
+service "spark_slaves" do
   action [:enable, :start]
+  only_if { node.ipaddress == node.spark.master_ip }
 end
 
