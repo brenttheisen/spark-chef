@@ -24,7 +24,7 @@ case "$1" in
         else
           failure
         fi
-        return $retval
+        exit $retval
         ;;
     stop)
         echo -n $"Stopping $prog: "
@@ -36,7 +36,7 @@ case "$1" in
         else
           failure
         fi
-        return $retval
+        exit $retval
         ;;
     restart)
         stop
