@@ -21,8 +21,6 @@ default[:spark] = {
   :properties => {},
   :hadoop_version => '2.2.0',
   :yarn => true,
-  :calliope => true,
-  :calliope_url => 'https://oss.sonatype.org/service/local/repositories/releases/content/com/tuplejump/calliope_2.10/0.9.0-U1-C2-EA/calliope_2.10-0.9.0-U1-C2-EA.jar',
-  :cassandra_classpath => '/usr/local/spark/lib_managed/jars/calliope.jar:/usr/share/cassandra/lib/apache-cassandra-2.0.6.jar:/usr/share/cassandra/lib/apache-cassandra-thrift-2.0.6.jar:/usr/share/cassandra/lib/libthrift-0.9.1.jar'
+  :classpath => nil
 }
 

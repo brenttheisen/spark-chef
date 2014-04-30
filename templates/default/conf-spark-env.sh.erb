@@ -50,8 +50,8 @@ SPARK_WORKER_INSTANCES=<%= @worker_instances %>
 <% if @worker_dir %>
 SPARK_WORKER_DIR=<%= @worker_dir %>
 <% end %>
-<% if @spark_classpath %>
-SPARK_CLASSPATH=<%= @spark_classpath %>
+<% if @classpath %>
+SPARK_CLASSPATH=<%= @classpath %>
 <% end %>
 <% if !@java_opts.nil? && !@java_opts.empty? %>
 SPARK_JAVA_OPTS=<%= @java_opts %>

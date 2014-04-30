@@ -39,19 +39,6 @@ bash 'build spark assembly' do
   user node.spark.username
 end
 
-spark_classpath = []
-if node.spark.calliope
-  calliope_jar = "#{node.spark.home}/lib_managed/jars/calliope.jar"
-  remote_file calliope_jar do
-    source node.spark.calliope_url
-    owner node.spark.username
-    group node.spark.username
-    action :create_if_missing
-  end
-
-  spark_classpath << node.spark.cassandra_classpath
-end
-
 java_opts = node.spark.java_opts || []
 java_opts = [java_opts] if !java_opts.kind_of?(Array)
 java_opts += node.spark.properties.collect { |k, v| "-D#{k}=#{v}" }
@@ -63,7 +50,7 @@ template "#{node.spark.home}/conf/spark-env.sh" do
   owner node.spark.username
   group node.spark.username
   variables({
-    :spark_classpath => spark_classpath.join(':'),
+    :classpath => node.spark.classpath,
     :spark_mem => node.spark.spark_mem,
     :local_ip => node.spark.local_ip,
     :mesos_native_library => node.spark.mesos_native_library,
@@ -81,56 +68,66 @@ template "#{node.spark.home}/conf/spark-env.sh" do
   })
 end
 
-template "#{node.spark.home}/conf/slaves" do
-  source "slaves.erb"
-  mode 440
-  owner node.spark.username
-  group node.spark.username
-  variables({
-    :slaves => node.spark.slaves
-  })
-  only_if { !node.spark.slaves.nil? && !node.spark.slaves.empty? }
-end
+if node.ipaddress == node.spark.master_ip
+  template "#{node.spark.home}/conf/slaves" do
+    source "slaves.erb"
+    mode 440
+    owner node.spark.username
+    group node.spark.username
+    variables({
+      :slaves => node.spark.slaves
+    })
+    only_if { !node.spark.slaves.nil? && !node.spark.slaves.empty? }
+  end
 
-template "/etc/init.d/spark_master" do
-  source "init.erb"
-  mode "755"
-  variables({
-    "prog" => "spark_master",
-    "description" => "Spark master daemon",
-    "runlevels" => "2345",
-    "username" => node.spark.username,
-    "start_priority" => "70",
-    "stop_priority" => "75",
-    "start_command" => "#{node.spark.home}/sbin/start-master.sh",
-    "stop_command" => "#{node.spark.home}/sbin/stop-master.sh"
-  })
-  only_if { node.ipaddress == node.spark.master_ip }
-end
+  if !node.spark.slaves.nil?
+    ohai "reload_passwd" do
+        plugin "passwd"
+    end
 
-service "spark_master" do
-  action [:enable, :start]
-  only_if { node.ipaddress == node.spark.master_ip }
-end
+    node.spark.slaves.each do |slave_ip|
+      ssh_known_hosts slave_ip do
+        user node.spark.username
+      end
+    end
+  end
 
-template "/etc/init.d/spark_slaves" do
-  source "init.erb"
-  mode "755"
-  variables({
-    "prog" => "spark_slaves",
-    "description" => "Spark slave daemons",
-    "runlevels" => "2345",
-    "username" => node.spark.username,
-    "start_priority" => "75",
-    "stop_priority" => "70",
-    "start_command" => "#{node.spark.home}/sbin/start-slaves.sh",
-    "stop_command" => "#{node.spark.home}/sbin/stop-slaves.sh"
-  })
-  only_if { node.ipaddress == node.spark.master_ip }
-end
+  template "/etc/init.d/spark_master" do
+    source "init.erb"
+    mode "755"
+    variables({
+      "prog" => "spark_master",
+      "description" => "Spark master daemon",
+      "runlevels" => "2345",
+      "username" => node.spark.username,
+      "start_priority" => "70",
+      "stop_priority" => "75",
+      "start_command" => "#{node.spark.home}/sbin/start-master.sh",
+      "stop_command" => "#{node.spark.home}/sbin/stop-master.sh"
+    })
+  end
 
-service "spark_slaves" do
-  action [:enable, :start]
-  only_if { node.ipaddress == node.spark.master_ip }
+  service "spark_master" do
+    action [:enable, :start]
+  end
+
+  template "/etc/init.d/spark_slaves" do
+    source "init.erb"
+    mode "755"
+    variables({
+      "prog" => "spark_slaves",
+      "description" => "Spark slave daemons",
+      "runlevels" => "2345",
+      "username" => node.spark.username,
+      "start_priority" => "75",
+      "stop_priority" => "70",
+      "start_command" => "#{node.spark.home}/sbin/start-slaves.sh",
+      "stop_command" => "#{node.spark.home}/sbin/stop-slaves.sh"
+    })
+  end
+
+  service "spark_slaves" do
+    action [:enable, :start]
+  end
 end
 
