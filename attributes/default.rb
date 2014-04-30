@@ -20,7 +20,7 @@ default[:spark] = {
   :worker_dir => nil,
   :properties => {},
   :hadoop_version => '1.0.4',
-  :yarn => true,
+  :yarn => false,
   :classpath => nil
 }
 
