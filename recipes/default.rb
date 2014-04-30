@@ -46,7 +46,7 @@ java_opts = java_opts.join(' ')
 
 template "#{node.spark.home}/conf/spark-env.sh" do
   source "conf-spark-env.sh.erb"
-  mode 440
+  mode 0755
   owner node.spark.username
   group node.spark.username
   variables({
