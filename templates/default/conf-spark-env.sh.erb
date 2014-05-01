@@ -23,6 +23,9 @@
 <% if @spark_mem %>
 SPARK_MEM=<%= @spark_mem %>
 <% end %>
+<% if @daemon_memory %>
+SPARK_DAEMON_MEMORY=<%= @daemon_memory %>
+<% end %>
 <% if @local_ip %>
 SPARK_LOCAL_IP=<%= @local_ip %>
 <% end %>

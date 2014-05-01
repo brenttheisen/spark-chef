@@ -18,6 +18,7 @@ default[:spark] = {
   :worker_webui_port => 8081,
   :worker_instances => nil,
   :worker_dir => nil,
+  :daemon_memory => nil,
   :properties => {},
   :hadoop_version => '1.0.4',
   :yarn => false,

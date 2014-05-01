@@ -64,6 +64,7 @@ template "#{node.spark.home}/conf/spark-env.sh" do
     :worker_webui_port => node.spark.worker_webui_port,
     :worker_instances => node.spark.worker_instances,
     :worker_dir => node.spark.worker_dir,
+    :daemon_memory => node.spark.daemon_memory,
     :properties => node.spark.properties
   })
 end
