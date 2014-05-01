@@ -69,7 +69,7 @@ template "#{node.spark.home}/conf/spark-env.sh" do
   })
 end
 
-template "/etc/security/limits.d/#{node.spark.username}.conf" od
+template "/etc/security/limits.d/#{node.spark.username}.conf" do
   source "spark-limits.conf.erb"
   mode 0644
 end
