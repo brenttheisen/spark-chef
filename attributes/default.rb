@@ -22,6 +22,10 @@ default[:spark] = {
   :properties => {},
   :hadoop_version => '1.0.4',
   :yarn => false,
-  :classpath => nil
+  :classpath => nil,
+  :limits => {
+    :nofile => 100000,
+    :nproc => 32768
+  }
 }
 

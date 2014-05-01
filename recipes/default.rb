@@ -69,6 +69,11 @@ template "#{node.spark.home}/conf/spark-env.sh" do
   })
 end
 
+template "/etc/security/limits.d/#{node.spark.username}.conf" od
+  source "spark-limits.conf.erb"
+  mode 0644
+end
+
 if node.ipaddress == node.spark.master_ip
   template "#{node.spark.home}/conf/slaves" do
     source "slaves.erb"
