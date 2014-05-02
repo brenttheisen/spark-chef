@@ -57,6 +57,6 @@ SPARK_WORKER_DIR=<%= @worker_dir %>
 SPARK_CLASSPATH=<%= @classpath %>
 <% end %>
 <% if !@java_opts.nil? && !@java_opts.empty? %>
-SPARK_JAVA_OPTS=<%= @java_opts %>
+export SPARK_JAVA_OPTS=<%= @java_opts %>
 <% end %>
 
