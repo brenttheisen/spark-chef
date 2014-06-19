@@ -46,9 +46,9 @@ Attributes
   </tr>
   <tr>
     <td><tt>['spark']['local_dirs']</tt></td>
-    <td>Array of Strings</td>
-    <td>Directories Spark will use to persist shuffles</td>
-    <td><tt>['/usr/local/spark/local_dir']</tt></td>
+    <td>String</td>
+    <td>Comma separated list of directories Spark will use to persist shuffles</td>
+    <td><tt>"/usr/local/spark/local_dir"</tt></td>
   </tr>
 
 </table>

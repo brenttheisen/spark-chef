@@ -23,7 +23,7 @@ ark 'spark' do
 end
 
 if node.spark.attribute?(:local_dirs)
-  node.spark.local_dirs.each do |dir|
+  node.spark.local_dirs.split(',').each do |dir|
     directory dir do
       owner node.spark.username
       group node.spark.username
@@ -52,7 +52,7 @@ template "#{node.spark.home}/conf/spark-env.sh" do
       'SPARK_LOCAL_IP' => node.spark.local_ip,
       'SPARK_PUBLIC_DNS' => node.spark.public_dns,
       'SPARK_CLASSPATH' => node.spark.classpath,
-      'SPARK_LOCAL_DIRS' => (node.spark.local_dirs.join(',') unless node.spark.local_dirs.empty?),
+      'SPARK_LOCAL_DIRS' => node.spark.local_dirs,
       'MESOS_NATIVE_LIBRARY' => node.spark.mesos_native_library,
       'SPARK_EXECUTOR_INSTANCES' => node.spark.executor_instances,
       'SPARK_EXECUTOR_CORES' => node.spark.executor_cores,
