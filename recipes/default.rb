@@ -22,11 +22,13 @@ ark 'spark' do
   action :install
 end
 
-if node.spark.attribute?(:properties) && node.spark.properties.attribute?(:"spark.local.dir")
-  directory node.spark.properties[:"spark.local.dir"] do
-    owner node.spark.username
-    group node.spark.username
-    recursive true
+if node.spark.attribute?(:local_dirs)
+  node.spark.local_dirs.each do |dir|
+    directory dir do
+      owner node.spark.username
+      group node.spark.username
+      recursive true
+    end
   end
 end
 
@@ -39,33 +41,42 @@ bash 'build spark assembly' do
   user node.spark.username
 end
 
-java_opts = node.spark.java_opts || []
-java_opts = [java_opts] if !java_opts.kind_of?(Array)
-java_opts += node.spark.properties.collect { |k, v| "-D#{k}=#{v}" }
-java_opts = java_opts.join(' ')
-
 template "#{node.spark.home}/conf/spark-env.sh" do
   source "conf-spark-env.sh.erb"
   mode 0755
   owner node.spark.username
   group node.spark.username
   variables({
-    :classpath => node.spark.classpath,
-    :spark_mem => node.spark.spark_mem,
-    :local_ip => node.spark.local_ip,
-    :mesos_native_library => node.spark.mesos_native_library,
-    :java_opts => java_opts,
-    :master_ip => node.spark.master_ip,
-    :master_port => node.spark.master_port,
-    :master_webui_port => node.spark.master_webui_port,
-    :worker_cores => node.spark.worker_cores,
-    :worker_memory => node.spark.worker_memory,
-    :worker_port => node.spark.worker_port,
-    :worker_webui_port => node.spark.worker_webui_port,
-    :worker_instances => node.spark.worker_instances,
-    :worker_dir => node.spark.worker_dir,
-    :daemon_memory => node.spark.daemon_memory,
-    :properties => node.spark.properties
+    :env_vars => {
+      'HADOOP_CONF_DIR' => node.spark.hadoop_conf_dir,
+      'SPARK_LOCAL_IP' => node.spark.local_ip,
+      'SPARK_PUBLIC_DNS' => node.spark.public_dns,
+      'SPARK_CLASSPATH' => node.spark.classpath,
+      'SPARK_LOCAL_DIRS' => (node.spark.local_dirs.join(',') unless node.spark.local_dirs.empty?),
+      'MESOS_NATIVE_LIBRARY' => node.spark.mesos_native_library,
+      'SPARK_EXECUTOR_INSTANCES' => node.spark.executor_instances,
+      'SPARK_EXECUTOR_CORES' => node.spark.executor_cores,
+      'SPARK_EXECUTOR_MEMORY' => node.spark.executor_memory,
+      'SPARK_DRIVER_MEMORY' => node.spark.driver_memory,
+      'SPARK_YARN_APP_NAME' => node.spark.yarn_app_name,
+      'SPARK_YARN_QUEUE' => node.spark.yarn_queue,
+      'SPARK_YARN_DIST_FILES' => node.spark.yarn_dist_files,
+      'SPARK_YARN_DIST_ARCHIVES' => node.spark.yarn_dist_archives,
+      'SPARK_MASTER_IP' => node.spark.master_ip,
+      'SPARK_MASTER_PORT' => node.spark.master_port,
+      'SPARK_MASTER_OPTS' => node.spark.master_opts,
+      'SPARK_MASTER_WEBUI_PORT' => node.spark.master_webui_port,
+      'SPARK_WORKER_CORES' => node.spark.worker_cores,
+      'SPARK_WORKER_MEMORY' => node.spark.worker_memory,
+      'SPARK_WORKER_PORT' => node.spark.worker_port,
+      'SPARK_WORKER_INSTANCES' => node.spark.worker_instances,
+      'SPARK_WORKER_DIR' => node.spark.worker_dir,
+      'SPARK_WORKER_OPTS' => node.spark.worker_opts,
+      'SPARK_WORKER_WEBUI_PORT' => node.spark.worker_webui_port,
+      'SPARK_HISTORY_OPTS' => node.spark.history_opts,
+      'SPARK_DAEMON_JAVA_OPTS' => node.spark.daemon_java_opts,
+      'SPARK_DAEMON_MEMORY' => node.spark.daemon_memory
+    }
   })
 end
 
