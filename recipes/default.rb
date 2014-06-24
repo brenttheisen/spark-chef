@@ -10,7 +10,25 @@ package 'git'
 user node.spark.username do
   username node.spark.username
   comment 'Spark'
+  home node.spark.home
   action :create
+end
+
+data = data_bag_item('spark', 'ssh_keys')
+raise 'Could not find spark ssh_key data bag' if data.nil?
+
+directory "#{node.spark.home}/.ssh" do
+  owner node.spark.username
+  group node.spark.username
+end
+
+public_ssh_key = data['public']
+raise 'Could not find spark ssh_key public data bag item' if public_ssh_key.nil?
+file "#{node.spark.home}/.ssh/authorized_keys" do
+  owner node.spark.username
+  group node.spark.username
+  mode '0600'
+  content public_ssh_key
 end
 
 ark 'spark' do
@@ -86,14 +104,21 @@ template "/etc/security/limits.d/#{node.spark.username}.conf" do
 end
 
 if node.ipaddress == node.spark.master_ip
-  template "#{node.spark.home}/conf/slaves" do
-    source "slaves.erb"
+  private_ssh_key = data['private']
+  raise 'Could not find spark ssh_key private data bag item' if private_ssh_key.nil?
+
+  file "#{node.spark.home}/.ssh/id_rsa" do
+    owner node.spark.username
+    group node.spark.username
+    mode '0600'
+    content private_ssh_key.join("\n")
+  end
+
+  file "#{node.spark.home}/conf/slaves" do
     mode 440
     owner node.spark.username
     group node.spark.username
-    variables({
-      :slaves => node.spark.slaves
-    })
+    content node.spark.slaves.join("\n")
     only_if { !node.spark.slaves.nil? && !node.spark.slaves.empty? }
   end
 
@@ -107,43 +132,24 @@ if node.ipaddress == node.spark.master_ip
         user node.spark.username
       end
     end
+
+    template "/etc/init.d/spark" do
+      source "init.erb"
+      mode "755"
+      variables({
+        "prog" => "spark",
+        "description" => "Spark cluster daemon",
+        "runlevels" => "2345",
+        "username" => node.spark.username,
+        "start_priority" => "70",
+        "stop_priority" => "75",
+        "start_command" => "#{node.spark.home}/sbin/start-all.sh",
+        "stop_command" => "#{node.spark.home}/sbin/stop-all.sh"
+      })
+    end
   end
 
-  template "/etc/init.d/spark_master" do
-    source "init.erb"
-    mode "755"
-    variables({
-      "prog" => "spark_master",
-      "description" => "Spark master daemon",
-      "runlevels" => "2345",
-      "username" => node.spark.username,
-      "start_priority" => "70",
-      "stop_priority" => "75",
-      "start_command" => "#{node.spark.home}/sbin/start-master.sh",
-      "stop_command" => "#{node.spark.home}/sbin/stop-master.sh"
-    })
-  end
-
-  service "spark_master" do
-    action [:enable, :start]
-  end
-
-  template "/etc/init.d/spark_slaves" do
-    source "init.erb"
-    mode "755"
-    variables({
-      "prog" => "spark_slaves",
-      "description" => "Spark slave daemons",
-      "runlevels" => "2345",
-      "username" => node.spark.username,
-      "start_priority" => "75",
-      "stop_priority" => "70",
-      "start_command" => "#{node.spark.home}/sbin/start-slaves.sh",
-      "stop_command" => "#{node.spark.home}/sbin/stop-slaves.sh"
-    })
-  end
-
-  service "spark_slaves" do
+  service "spark" do
     action [:enable, :start]
   end
 end
