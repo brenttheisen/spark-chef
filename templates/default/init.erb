@@ -44,8 +44,12 @@ case "$1" in
         stop
         start
         ;;
+    status)
+        status -p /tmp/spark-spark-org.apache.spark.deploy.master.Master-1.pid 'master' &&
+            status -p /tmp/spark-spark-org.apache.spark.deploy.worker.Worker-1.pid 'worker'
+        ;;
     *)
-        echo $"Usage: $0 {start|stop|restart}"
+        echo $"Usage: $0 {start|stop|restart|status}"
         exit 2
 esac
 exit $?
