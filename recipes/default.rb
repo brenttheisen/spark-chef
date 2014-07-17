@@ -14,23 +14,6 @@ user node.spark.username do
   action :create
 end
 
-data = data_bag_item('spark', 'ssh_keys')
-raise 'Could not find spark ssh_key data bag' if data.nil?
-
-directory "#{node.spark.home}/.ssh" do
-  owner node.spark.username
-  group node.spark.username
-end
-
-public_ssh_key = data['public']
-raise 'Could not find spark ssh_key public data bag item' if public_ssh_key.nil?
-file "#{node.spark.home}/.ssh/authorized_keys" do
-  owner node.spark.username
-  group node.spark.username
-  mode '0600'
-  content public_ssh_key
-end
-
 ark 'spark' do
   url node.spark.url
   version node.spark.version
@@ -152,5 +135,22 @@ if node.ipaddress == node.spark.master_ip
   service "spark" do
     action [:enable, :start]
   end
+end
+
+data = data_bag_item('spark', 'ssh_keys')
+raise 'Could not find spark ssh_key data bag' if data.nil?
+
+directory "#{node.spark.home}/.ssh" do
+  owner node.spark.username
+  group node.spark.username
+end
+
+public_ssh_key = data['public']
+raise 'Could not find spark ssh_key public data bag item' if public_ssh_key.nil?
+file "#{node.spark.home}/.ssh/authorized_keys" do
+  owner node.spark.username
+  group node.spark.username
+  mode '0600'
+  content public_ssh_key
 end
 
