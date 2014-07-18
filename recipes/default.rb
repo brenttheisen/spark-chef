@@ -86,6 +86,9 @@ template "/etc/security/limits.d/#{node.spark.username}.conf" do
   mode 0644
 end
 
+data = data_bag_item('spark', 'ssh_keys')
+raise 'Could not find spark ssh_key data bag' if data.nil?
+
 if node.ipaddress == node.spark.master_ip
   private_ssh_key = data['private']
   raise 'Could not find spark ssh_key private data bag item' if private_ssh_key.nil?
@@ -136,9 +139,6 @@ if node.ipaddress == node.spark.master_ip
     action [:enable, :start]
   end
 end
-
-data = data_bag_item('spark', 'ssh_keys')
-raise 'Could not find spark ssh_key data bag' if data.nil?
 
 directory "#{node.spark.home}/.ssh" do
   owner node.spark.username
