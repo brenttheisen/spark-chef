@@ -10,14 +10,15 @@ package 'git'
 user node.spark.username do
   username node.spark.username
   comment 'Spark'
-  home node.spark.home
+  # Don't want this directory created because ark creates the link for it
+  # home node.spark.home
   action :create
 end
 
 ark 'spark' do
   url node.spark.url
   version node.spark.version
-  has_binaries [ 'bin/spark-shell', 'bin/spark-class', 'bin/pyspark' ]
+  append_env_path true
   owner node.spark.username
   group node.spark.username
   action :install
@@ -89,6 +90,20 @@ end
 data = data_bag_item('spark', 'ssh_keys')
 raise 'Could not find spark ssh_key data bag' if data.nil?
 
+directory "#{node.spark.home}/.ssh" do
+  owner node.spark.username
+  group node.spark.username
+end
+
+public_ssh_key = data['public']
+raise 'Could not find spark ssh_key public data bag item' if public_ssh_key.nil?
+file "#{node.spark.home}/.ssh/authorized_keys" do
+  owner node.spark.username
+  group node.spark.username
+  mode '0600'
+  content public_ssh_key
+end
+
 if node.ipaddress == node.spark.master_ip
   private_ssh_key = data['private']
   raise 'Could not find spark ssh_key private data bag item' if private_ssh_key.nil?
@@ -138,19 +153,5 @@ if node.ipaddress == node.spark.master_ip
   service "spark" do
     action [:enable, :start]
   end
-end
-
-directory "#{node.spark.home}/.ssh" do
-  owner node.spark.username
-  group node.spark.username
-end
-
-public_ssh_key = data['public']
-raise 'Could not find spark ssh_key public data bag item' if public_ssh_key.nil?
-file "#{node.spark.home}/.ssh/authorized_keys" do
-  owner node.spark.username
-  group node.spark.username
-  mode '0600'
-  content public_ssh_key
 end
 
