@@ -10,8 +10,8 @@ package 'git'
 user node.spark.username do
   username node.spark.username
   comment 'Spark'
-  # Don't want this directory created because ark creates the link for it
-  # home node.spark.home
+  home node.spark.home
+  supports :manage_home => false
   action :create
 end
 
@@ -34,13 +34,15 @@ if node.spark.attribute?(:local_dirs)
   end
 end
 
-assembly_env_vars = []
-assembly_env_vars << "SPARK_HADOOP_VERSION=#{node.spark.hadoop_version}" if node.spark.hadoop_version
-assembly_env_vars << "SPARK_YARN=true" if node.spark.yarn
-bash 'build spark assembly' do
-  cwd node.spark.home
-  code "#{assembly_env_vars.join(' ')} sbt/sbt assembly"
-  user node.spark.username
+if node.spark.assemble
+  assembly_env_vars = []
+  assembly_env_vars << "SPARK_HADOOP_VERSION=#{node.spark.hadoop_version}" if node.spark.hadoop_version
+  assembly_env_vars << "SPARK_YARN=true" if node.spark.yarn
+  bash 'build spark assembly' do
+    cwd node.spark.home
+    code "#{assembly_env_vars.join(' ')} sbt/sbt assembly"
+    user node.spark.username
+  end
 end
 
 template "#{node.spark.home}/conf/spark-env.sh" do
