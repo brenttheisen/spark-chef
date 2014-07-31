@@ -19,6 +19,7 @@ end
 directory node.spark.home do
   recursive true
   action :delete
+  only_if { File.directory?(node.spark.home) }
 end
 
 ark 'spark' do
