@@ -15,6 +15,11 @@ user node.spark.username do
   action :create
 end
 
+# Total hack but the home directory gets created later by ark
+directory node.spark.home do
+  action :delete
+end
+
 ark 'spark' do
   url node.spark.url
   version node.spark.version
