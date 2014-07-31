@@ -17,6 +17,7 @@ end
 
 # Total hack but the home directory gets created later by ark
 directory node.spark.home do
+  recursive true
   action :delete
 end
 
