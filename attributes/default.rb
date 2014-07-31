@@ -1,5 +1,5 @@
 default[:spark] = {
-  :version => '1.0.0',
+  :version => '1.0.1',
   :url => 'http://d3kbcqa49mib13.cloudfront.net/spark-1.0.1-bin-hadoop1.tgz',
   :checksum => 'CFC382678ECAFA51D06FF15629DD60B1A79544290FBE33D675880FA9FA82D400AAD0C6B018513EC8B17F0DD03C62F7AF3B6D2438F16FC8DEAD81B0EB4C0C1C39',
   :assemble => false,
