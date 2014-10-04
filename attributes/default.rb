@@ -1,7 +1,7 @@
 default[:spark] = {
-  :version => '1.0.1',
-  :url => 'http://d3kbcqa49mib13.cloudfront.net/spark-1.0.1-bin-hadoop1.tgz',
-  :checksum => 'CFC382678ECAFA51D06FF15629DD60B1A79544290FBE33D675880FA9FA82D400AAD0C6B018513EC8B17F0DD03C62F7AF3B6D2438F16FC8DEAD81B0EB4C0C1C39',
+  :version => '1.1.0',
+  :url => 'http://d3kbcqa49mib13.cloudfront.net/spark-1.1.0-bin-hadoop2.4.tgz',
+  :checksum => 'E76F3929B7A7BC2D5F3CC94A448015427038650D53E0551FFD0C305A2A1DEAF9A6D5A8272251D7A5531E1720F2DB462345A6AB416EB7763CFABB4DF4F626C9C5',
   :assemble => false,
   :home => '/usr/local/spark',
   :username => 'spark',
