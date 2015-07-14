@@ -160,7 +160,7 @@ if node.ipaddress == node.spark.master_ip
   end
 
   service "spark" do
-    action [:enable, :start]
+    action [:enable, :restart]
   end
 end
 
