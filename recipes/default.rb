@@ -113,7 +113,7 @@ file "#{node.spark.home}/.ssh/authorized_keys" do
   content public_ssh_key
 end
 
-if node.ipaddress == node.spark.master_ip
+if node.spark.is_master
   private_ssh_key = data['private']
   raise 'Could not find spark ssh_key private data bag item' if private_ssh_key.nil?
 
