@@ -154,13 +154,14 @@ if node.ipaddress == node.spark.master_ip
         "start_priority" => "70",
         "stop_priority" => "75",
         "start_command" => "#{node.spark.home}/sbin/start-all.sh",
-        "stop_command" => "#{node.spark.home}/sbin/stop-all.sh"
+        "stop_command" => "#{node.spark.home}/sbin/stop-all.sh",
+        "restart_command" => "#{node.spark.home}/sbin/stop-all.sh ; #{node.spark.home}/sbin/start-all.sh"
       })
     end
   end
 
   service "spark" do
-    action [:enable, :start]
+    action [:enable, :restart]
   end
 end
 
