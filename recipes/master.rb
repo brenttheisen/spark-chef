@@ -5,6 +5,9 @@
 
 include_recipe 'spark'
 
+data = data_bag_item('spark', 'ssh_keys')
+raise 'Could not find spark ssh_key data bag' if data.nil?
+
 private_ssh_key = data['private']
 raise 'Could not find spark ssh_key private data bag item' if private_ssh_key.nil?
 
