@@ -7,7 +7,7 @@
 # Auto generate configuration variables from Spark Chef Cookbook
 <% @spark_props.each do |key, value| %>
 <% if !key.nil? && !value.nil? %>
-<%= key %>=<%= value %>
+<%= key %>   <%= value %>
 <% end %>
 <% end %>
 
