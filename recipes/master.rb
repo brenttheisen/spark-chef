@@ -28,7 +28,8 @@ end
 
 if !node.spark.slaves.nil?
   ohai "reload_passwd" do
-      plugin "passwd"
+      plugin "etc"
+      action :reload
   end
 
   node.spark.slaves.each do |slave_ip|
