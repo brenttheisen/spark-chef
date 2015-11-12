@@ -91,6 +91,30 @@ template "#{node.spark.home}/conf/spark-env.sh" do
   })
 end
 
+template "#{node.spark.home}/conf/spark-defaults.conf" do
+  source "spark-defaults.conf.erb"
+  mode 0755
+  owner node.spark.username
+  group node.spark.username
+  variables({
+    :spark_props => {
+      'spark.reducer.maxSizeInFlight' => node.spark.conf.reducer_max_inflight,
+      'spark.shuffle.compress' => node.spark.conf.shuffle_compress,
+      'spark.shuffle.consolidateFiles' => node.spark.conf.shuffle_consolidate_files,
+      'spark.shuffle.file.buffer' => node.spark.conf.shuffle_file_buffer,
+      'spark.shuffle.io.maxRetries' => node.spark.conf.shuffle_max_retries,
+      'spark.shuffle.io.numConnectionsPerPeer' => node.spark.conf.shuffle_num_connections_per_peer,
+      'spark.shuffle.io.preferDirectBufs' => node.spark.conf.shuffle_direct_bufs,
+      'spark.shuffle.io.retryWait' => node.spark.conf.shuffle_retry_wait,
+      'spark.shuffle.memoryFraction' => node.spark.conf.shuffle_memory_fraction,
+      'spark.shuffle.sort.bypassMergeThreshold' => node.spark.conf.shuffle_sort_bypass_merge_threshold,
+      'spark.shuffle.spill' => node.spark.conf.shuffle_spill,
+      'spark.shuffle.spill.compress' => node.spark.conf.shuffle_spill_compress,
+      'spark.akka.frameSize' => node.spark.conf.akka_framesize
+    }
+  })
+end
+
 template "/etc/security/limits.d/#{node.spark.username}.conf" do
   source "spark-limits.conf.erb"
   mode 0644
