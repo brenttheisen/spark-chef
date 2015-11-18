@@ -45,7 +45,7 @@
 # Auto generate variables from Spark Chef Cookbook
 <% @env_vars.each do |key, value| %>
 <% if !key.nil? && !value.nil? %>
-<%= key %>=<%= value %>
+<%= key %>="<%= value %>"
 <% end %>
 <% end %>
 
